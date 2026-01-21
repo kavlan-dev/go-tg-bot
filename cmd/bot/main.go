@@ -25,12 +25,12 @@ func main() {
 	}
 	log, err := utils.InitLogger(cfg.Environment)
 	if err != nil {
-		log.Fatalf("Ошибка инициализации логгера: %v\n", err)
+		log.Fatalf("Ошибка инициализации логгера: %v", err)
 	}
 
 	bot, err := telego.NewBot(cfg.Token, telego.WithDefaultDebugLogger())
 	if err != nil {
-		log.Fatalf("Ошибка создания бота: %v\n", err)
+		log.Fatalf("Ошибка создания бота: %v", err)
 	}
 
 	services := services.New()
@@ -38,7 +38,7 @@ func main() {
 
 	botUser, err := bot.GetMe(ctx)
 	if err != nil {
-		log.Fatalf("Ошибка при проверке работоспособности бота: %v\n", err)
+		log.Fatalf("Ошибка при проверке работоспособности бота: %v", err)
 	}
 	log.Info("Бот запущен: @%s (%s)\n", botUser.Username, botUser.FirstName)
 
@@ -52,7 +52,7 @@ func main() {
 
 	go func() {
 		<-sigChan
-		log.Info("\nОстановка приложения...")
+		log.Info("Остановка приложения...")
 		cancel()
 	}()
 

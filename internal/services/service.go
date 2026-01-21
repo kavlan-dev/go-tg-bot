@@ -3,8 +3,10 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 type Services struct {
@@ -15,16 +17,23 @@ func New() *Services {
 }
 
 func (s *Services) DogRandom(ctx context.Context) (string, error) {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://random.dog/woof.json", nil)
 	if err != nil {
 		return "", err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Сервис временно недоступен. Попробуйте позже.")
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -39,6 +48,10 @@ func (s *Services) DogRandom(ctx context.Context) (string, error) {
 	err = json.Unmarshal(body, &dogData)
 	if err != nil {
 		return "", err
+	}
+
+	if dogData.URL == "" {
+		return "", fmt.Errorf("Не удалось получить фотографию собаки. Попробуйте позже.")
 	}
 
 	return dogData.URL, nil
