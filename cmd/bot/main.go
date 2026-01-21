@@ -40,11 +40,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Ошибка при проверке работоспособности бота: %v", err)
 	}
-	log.Info("Бот запущен: @%s (%s)\n", botUser.Username, botUser.FirstName)
+	log.Info("Бот запущен: @%s (%s)", botUser.Username, botUser.FirstName)
 
 	updates, err := bot.UpdatesViaLongPolling(ctx, nil)
 	if err != nil {
-		log.Fatalf("Ошибка обновления: %v\n", err)
+		log.Fatalf("Ошибка обновления: %v", err)
 	}
 
 	sigChan := make(chan os.Signal, 1)
