@@ -4,7 +4,6 @@ import (
 	"context"
 	"go-tg-bot/internal/config"
 	"go-tg-bot/internal/handlers"
-	"go-tg-bot/internal/routers"
 	"go-tg-bot/internal/services"
 	"go-tg-bot/internal/utils"
 	"log"
@@ -13,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/mymmrac/telego"
+	th "github.com/mymmrac/telego/telegohandler"
 )
 
 func main() {
@@ -47,6 +47,7 @@ func main() {
 		log.Fatalf("Ошибка обновления: %v", err)
 	}
 
+	hd, err := th.NewBotHandler(bot, updates)
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
@@ -57,7 +58,11 @@ func main() {
 	}()
 
 	log.Info("Чтение сообщений...")
-	routers.StartRouters(ctx, updates, bot, handlers)
+	hd.Handle(handlers.HelpHandle, th.CommandEqual("start"))
+	hd.Handle(handlers.HelpHandle, th.CommandEqual("help"))
+	hd.Handle(handlers.DogHandler, th.CommandEqual("dog"))
+
+	hd.Start()
 
 	log.Info("Бот остановлен")
 }

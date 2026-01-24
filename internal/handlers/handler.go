@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/mymmrac/telego"
+	th "github.com/mymmrac/telego/telegohandler"
 	tu "github.com/mymmrac/telego/telegoutil"
 	"go.uber.org/zap"
 )
@@ -26,31 +27,33 @@ func New(services ServicesInterface, bot *telego.Bot, log *zap.SugaredLogger) *H
 	}
 }
 
-func (h *Handler) HelpHandle(ctx context.Context, message *telego.Message) {
-	h.bot.SendMessage(ctx, tu.Message(
-		tu.ID(message.Chat.ID),
-		`
-Простой телеграм бот
+func (h *Handler) HelpHandle(ctx *th.Context, update telego.Update) error {
+	chatID := tu.ID(update.Message.Chat.ID)
+	msg := "Простой телеграм бот\n\n/start - начать работу с ботом\n/dog - отправляет случайную фотографию с собакой\n/help - справка по командам"
 
-/start - начать работу с ботом
-/dog - отправляет случайную фотографию с собакой
-/help - справка по командам
-		`,
+	_, err := h.bot.SendMessage(ctx, tu.Message(
+		chatID,
+		msg,
 	))
+
+	return err
 }
 
-func (h *Handler) DogHandler(ctx context.Context, message *telego.Message) {
+func (h *Handler) DogHandler(ctx *th.Context, update telego.Update) error {
+	chatID := tu.ID(update.Message.Chat.ID)
+
 	url, err := h.services.DogRandom(ctx)
 	if err != nil {
-		h.log.Errorln("Не удалось получить ссылку на фотографию:", err)
 		h.bot.SendMessage(ctx, tu.Message(
-			tu.ID(message.Chat.ID),
+			chatID,
 			"Произошла ошибка, попробуйте позже",
 		))
+		return err
 	}
 
-	h.bot.SendPhoto(ctx, tu.Photo(
-		tu.ID(message.Chat.ID),
+	_, err = h.bot.SendPhoto(ctx, tu.Photo(
+		chatID,
 		tu.FileFromURL(url),
 	))
+	return err
 }
