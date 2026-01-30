@@ -9,25 +9,25 @@ import (
 	"go.uber.org/zap"
 )
 
-type ServicesInterface interface {
+type servicesInterface interface {
 	DogRandom(ctx context.Context) (string, error)
 }
 
-type Handler struct {
-	services ServicesInterface
+type handler struct {
+	services servicesInterface
 	bot      *telego.Bot
 	log      *zap.SugaredLogger
 }
 
-func New(services ServicesInterface, bot *telego.Bot, log *zap.SugaredLogger) *Handler {
-	return &Handler{
+func NewHandler(services servicesInterface, bot *telego.Bot, log *zap.SugaredLogger) *handler {
+	return &handler{
 		services: services,
 		bot:      bot,
 		log:      log,
 	}
 }
 
-func (h *Handler) HelpHandle(ctx *th.Context, update telego.Update) error {
+func (h *handler) HelpHandle(ctx *th.Context, update telego.Update) error {
 	chatID := tu.ID(update.Message.Chat.ID)
 	msg := "Простой телеграм бот\n\n/start - начать работу с ботом\n/dog - отправляет случайную фотографию с собакой\n/help - справка по командам"
 
@@ -39,7 +39,7 @@ func (h *Handler) HelpHandle(ctx *th.Context, update telego.Update) error {
 	return err
 }
 
-func (h *Handler) DogHandler(ctx *th.Context, update telego.Update) error {
+func (h *handler) DogHandler(ctx *th.Context, update telego.Update) error {
 	chatID := tu.ID(update.Message.Chat.ID)
 
 	url, err := h.services.DogRandom(ctx)

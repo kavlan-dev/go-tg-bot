@@ -6,12 +6,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Config struct {
+type config struct {
 	Environment string
 	Token       string
 }
 
-func LoadConfig() (*Config, error) {
+func InitConfig() (*config, error) {
 	v := viper.New()
 
 	v.SetConfigName("config")
@@ -23,10 +23,10 @@ func LoadConfig() (*Config, error) {
 	v.SetDefault("env", "prod")
 
 	if err := v.ReadInConfig(); err != nil {
-		return &Config{}, err
+		return &config{}, err
 	}
 
-	config := Config{
+	config := config{
 		Environment: v.GetString("env"),
 		Token:       v.GetString("token"),
 	}

@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-type Services struct {
+type services struct {
 }
 
-func New() *Services {
-	return &Services{}
+func NewService() *services {
+	return &services{}
 }
 
-func (s *Services) DogRandom(ctx context.Context) (string, error) {
+func (s *services) DogRandom(ctx context.Context) (string, error) {
 	client := &http.Client{
 		Timeout: 10 * time.Second,
 	}
