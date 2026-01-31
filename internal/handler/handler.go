@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func NewHandler(services servicesInterface, bot *telego.Bot, log *zap.SugaredLog
 	}
 }
 
-func (h *handler) HelpHandle(ctx *th.Context, update telego.Update) error {
+func (h *handler) HelpHandler(ctx *th.Context, update telego.Update) error {
 	chatID := tu.ID(update.Message.Chat.ID)
 	msg := "Простой телеграм бот\n\n/start - начать работу с ботом\n/dog - отправляет случайную фотографию с собакой\n/help - справка по командам"
 

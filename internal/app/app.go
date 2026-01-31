@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"go-tg-bot/internal/config"
-	"go-tg-bot/internal/handlers"
-	"go-tg-bot/internal/services"
-	"go-tg-bot/internal/utils"
+	"go-tg-bot/internal/handler"
+	"go-tg-bot/internal/service"
+	"go-tg-bot/internal/util"
 	"log"
 	"os"
 	"os/signal"
@@ -24,7 +24,7 @@ func Run() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log, err := utils.InitLogger(cfg.Environment)
+	log, err := util.InitLogger(cfg.Environment)
 	if err != nil {
 		log.Fatalf("Ошибка инициализации логгера: %v", err)
 	}
@@ -34,8 +34,8 @@ func Run() {
 		log.Fatalf("Ошибка создания бота: %v", err)
 	}
 
-	services := services.NewService()
-	handlers := handlers.NewHandler(services, bot, log)
+	service := service.NewService()
+	handler := handler.NewHandler(service, bot, log)
 
 	botUser, err := bot.GetMe(ctx)
 	if err != nil {
@@ -59,9 +59,9 @@ func Run() {
 	}()
 
 	log.Info("Чтение сообщений...")
-	hd.Handle(handlers.HelpHandle, th.CommandEqual("start"))
-	hd.Handle(handlers.HelpHandle, th.CommandEqual("help"))
-	hd.Handle(handlers.DogHandler, th.CommandEqual("dog"))
+	hd.Handle(handler.HelpHandler, th.CommandEqual("start"))
+	hd.Handle(handler.HelpHandler, th.CommandEqual("help"))
+	hd.Handle(handler.DogHandler, th.CommandEqual("dog"))
 
 	hd.Start()
 
