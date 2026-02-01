@@ -2,38 +2,34 @@ package config
 
 import (
 	"fmt"
-
-	"github.com/spf13/viper"
+	"os"
 )
 
 type config struct {
-	Environment string
-	Token       string
+	Env   string
+	Token string
 }
 
 func InitConfig() (*config, error) {
-	v := viper.New()
-
-	v.SetConfigName("config")
-	v.SetConfigType("yaml")
-
-	v.AddConfigPath("./config")
-	v.AddConfigPath("../../config")
-
-	v.SetDefault("env", "prod")
-
-	if err := v.ReadInConfig(); err != nil {
-		return &config{}, err
+	var config config
+	config.Env = envOrDefault("ENV", "prod")
+	if config.Env != "prod" && config.Env != "dev" && config.Env != "local" {
+		return nil, fmt.Errorf("Недопустимое значение ENV")
 	}
 
-	config := config{
-		Environment: v.GetString("env"),
-		Token:       v.GetString("token"),
-	}
-
-	if config.Environment != "dev" && config.Environment != "prod" {
-		return nil, fmt.Errorf("Окружение %s не найдено", config.Environment)
+	config.Token = os.Getenv("TOKEN")
+	if config.Token == "" {
+		return nil, fmt.Errorf("Токен не указан")
 	}
 
 	return &config, nil
+}
+
+func envOrDefault(varName string, defaultValue string) string {
+	value := os.Getenv(varName)
+	if value == "" {
+		value = defaultValue
+	}
+
+	return value
 }

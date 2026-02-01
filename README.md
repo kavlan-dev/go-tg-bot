@@ -27,23 +27,12 @@ go-tg-bot - это Telegram бот, который:
    cd go-tg-bot
    ```
 
-2. Создайте конфигурационный файл:
-   ```bash
-   cp config/config.example.yaml config/config.yaml
-   ```
-
-3. Отредактируйте `config/config.yaml` и добавьте ваш Telegram Bot Token:
-   ```yaml
-   env: "dev" # dev или prod
-   token: "YOUR_TELEGRAM_BOT_TOKEN"
-   ```
-
-4. Установите зависимости:
+2. Установите зависимости:
    ```bash
    go mod download
    ```
 
-5. Запустите бота:
+3. Запустите бота:
    ```bash
    go run cmd/bot/main.go
    ```
@@ -95,20 +84,17 @@ token: "YOUR_TELEGRAM_BOT_TOKEN" # токен Telegram бота
 
 Основные зависимости:
 - [telego](https://github.com/mymmrac/telego) - Telegram Bot API wrapper
-- [viper](https://github.com/spf13/viper) - Управление конфигурацией
 - [zap](https://github.com/uber-go/zap) - Логгирование
 
 ## Разработка
 
 ### Структура проекта
 
-```bash
+```
 go-tg-bot/
 ├── cmd/
 │   └── bot/
 │       └── main.go          # Основная точка входа
-├── config/
-│   └── config.example.yaml  # Пример конфигурации
 ├── internal/
 │   ├── config/              # Конфигурация
 │   ├── handlers/            # Обработчики команд
@@ -116,23 +102,55 @@ go-tg-bot/
 │   ├── routers/             # Маршрутизация сообщений
 │   ├── services/            # Сервисный слой
 │   └── utils/               # Утилиты
+├── .env.example             # Пример файла окружения
+├── Dockerfile               # Конфигурация Docker
+├── docker-compose.yml       # Конфигурация Docker Compose
 ├── go.mod                   # Зависимости
 ├── go.sum                   # Контрольные суммы зависимостей
 ├── LICENSE                  # Лицензия (MIT)
 └── README.md                # Документация
 ```
 
-### Сборка
+### Сборка и запуск
 
 ```bash
-go build -o go-tg-bot cmd/bot/main.go
+go build ./cmd/bot
 ```
-
-### Запуск
 
 ```bash
-./go-tg-bot
+TOKEN=<your_token> ENV=local ./go-tg-bot
 ```
+
+### Переменные окружения
+
+- `TOKEN` - Обязательная переменная для запуска бота (токен Telegram)
+- `ENV` - Необязательная переменная (по умолчанию `prod`). Доступные значения:
+  - `local` - Локальный режим (аналогичен `dev`)
+  - `dev` - Режим разработки (подробное логирование)
+  - `prod` - Продакшн режим (структурированное логирование)
+
+Без указания переменной `TOKEN` программа не запустится.
+
+### Запуск через Docker
+
+Проект можно собрать и запустить в контейнере Docker. Для этого в корне проекта находится `Dockerfile` и `docker-compose.yml`.
+
+1. Соберите и запустите контейнер:
+   ```bash
+   docker-compose up -d
+   ```
+
+2. Проверьте логи:
+   ```bash
+   docker-compose logs -f
+   ```
+
+3. Остановите контейнер:
+   ```bash
+   docker-compose down
+   ```
+
+Конфигурация загружается из `.env` файла, который монтируется как том, что позволяет изменять параметры без пересборки образа.
 
 ## Лицензия
 

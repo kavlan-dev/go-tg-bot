@@ -16,7 +16,6 @@ import (
 )
 
 func Run() {
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -24,7 +23,7 @@ func Run() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log, err := util.InitLogger(cfg.Environment)
+	log, err := util.InitLogger(cfg.Env)
 	if err != nil {
 		log.Fatalf("Ошибка инициализации логгера: %v", err)
 	}
