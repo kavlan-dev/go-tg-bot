@@ -13,7 +13,7 @@ type config struct {
 func InitConfig() (*config, error) {
 	var config config
 	config.Env = envOrDefault("ENV", "prod")
-	if config.Env != "prod" && config.Env != "dev" && config.Env != "local" {
+	if config.Env != "prod" && config.Env != "dev" {
 		return nil, fmt.Errorf("Недопустимое значение ENV")
 	}
 
